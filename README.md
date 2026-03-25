@@ -20,37 +20,46 @@
 
 ### Installation
 
-```bash
-pip install git+https://github.com/BF667-IDLE/vsep.git
-```
+**Clone and install dependencies:**
 
-Or for local development:
 ```bash
 git clone https://github.com/BF667-IDLE/vsep.git
 cd vsep
-pip install -e .
+pip install -r requirements.txt
 ```
+
+**For development (includes testing tools):**
+
+```bash
+pip install -r requirements-dev.txt
+```
+
+See [INSTALL.md](INSTALL.md) for detailed platform-specific instructions (Windows GPU, macOS, Linux).
 
 ### Basic Usage
 
 **Separate vocals from instrumentation:**
+
 ```bash
-audio-separator your_song.mp3
+python utils/cli.py your_song.mp3
 ```
 
 **Use a specific model:**
+
 ```bash
-audio-separator your_song.mp3 --model_filename UVR-MDX-NET-Inst_1.onnx
+python utils/cli.py your_song.mp3 -m UVR-MDX-NET-Inst_1.onnx
 ```
 
-**Extract drums only:**
+**List available models:**
+
 ```bash
-audio-separator your_song.mp3 --model_filename ht-demucs-ft.yaml --primary_stem_output_path drums.wav
+python utils/cli.py --list_models
 ```
 
-**Ensemble multiple models for best quality:**
+**Download a model:**
+
 ```bash
-audio-separator your_song.mp3 --ensemble_preset vocals_ensemble
+python utils/cli.py --download_model_only UVR-MDX-NET-Inst_1.onnx
 ```
 
 ### Python API
