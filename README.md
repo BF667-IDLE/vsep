@@ -278,20 +278,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Discussions:** [GitHub Discussions](https://github.com/BF667-IDLE/vsep/discussions)
 - **Colab Demo:** [Try it free](https://colab.research.google.com/github/BF667-IDLE/vsep/blob/main/notebooks/vsep_demo.ipynb)
 
-## 📬 Citation
-
-If you use vsep in your research, please cite:
-
-```bibtex
-@software{vsep2024,
-  author = {Beveridge, Andrew and contributors},
-  title = {vsep: Fast Audio Stem Separator},
-  year = {2024},
-  publisher = {GitHub},
-  url = {https://github.com/BF667-IDLE/vsep}
-}
-```
-
 ---
 
 <div align="center">
