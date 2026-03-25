@@ -18,16 +18,20 @@ def main():
     log_handler.setFormatter(log_formatter)
     logger.addHandler(log_handler)
 
-    parser = argparse.ArgumentParser(description="Separate audio files using a remote audio-separator API.", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, max_help_position=60))
+    parser = argparse.ArgumentParser(
+        prog="vsep-remote",
+        description="⚡ vsep-remote - Cloud API client for vsep audio separator",
+        formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, max_help_position=60)
+    )
 
     # Get package version
-    package_version = metadata.distribution("audio-separator").version
+    package_version = metadata.distribution("vsep").version
 
     # Main command subparsers
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
 
     # Separate command
-    separate_parser = subparsers.add_parser("separate", help="Separate audio files")
+    separate_parser = subparsers.add_parser("separate", help="⚡ Separate audio files using vsep cloud API")
     separate_parser.add_argument("audio_files", nargs="+", help="Audio file paths to separate")
 
     # Model selection (mutually exclusive: preset, single model, or multiple models)

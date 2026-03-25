@@ -3,17 +3,17 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
-name = "audio-separator"
+name = "vsep"
 version = "0.43.1"
-description = "Easy to use audio stem separation, using various models from UVR trained primarily by @Anjok07"
+description = "Lightning-fast audio stem separator with AI-powered vocal removal and instrument extraction"
 authors = ["Andrew Beveridge <andrew@beveridge.uk>"]
 license = "MIT"
 readme = "README.md"
 include = ["separator/models.json", "ensemble_presets.json"]
-homepage = "https://github.com/karaokenerds/python-audio-separator"
-repository = "https://github.com/karaokenerds/python-audio-separator"
-documentation = "https://github.com/karaokenerds/python-audio-separator/blob/main/README.md"
-keywords = ["audio", "sound", "karaoke"]
+homepage = "https://github.com/BF667-IDLE/vsep"
+repository = "https://github.com/BF667-IDLE/vsep"
+documentation = "https://github.com/BF667-IDLE/vsep#readme"
+keywords = ["audio", "sound", "karaoke", "vocal-remover", "stem-separation", "music-separation"]
 classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
@@ -63,8 +63,8 @@ gpu = ["onnxruntime-gpu"]
 dml = ["onnxruntime-directml", "torch_directml"]
 
 [tool.poetry.scripts]
-audio-separator = 'utils.cli:main'
-audio-separator-remote = 'remote.cli:main'
+vsep = 'utils.cli:main'
+vsep-remote = 'remote.cli:main'
 
 [tool.poetry.group.dev.dependencies]
 black = ">=23"

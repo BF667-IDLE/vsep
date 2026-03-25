@@ -183,10 +183,11 @@ class Separator:
         self.output_dir = output_dir
 
         # Check for environment variable to override model_file_dir
-        env_model_dir = os.environ.get("AUDIO_SEPARATOR_MODEL_DIR")
+        # Support both VSEP_MODEL_DIR (new) and AUDIO_SEPARATOR_MODEL_DIR (legacy)
+        env_model_dir = os.environ.get("VSEP_MODEL_DIR") or os.environ.get("AUDIO_SEPARATOR_MODEL_DIR")
         if env_model_dir:
             self.model_file_dir = env_model_dir
-            self.logger.info(f"Using model directory from AUDIO_SEPARATOR_MODEL_DIR env var: {self.model_file_dir}")
+            self.logger.info(f"Using model directory from VSEP_MODEL_DIR env var: {self.model_file_dir}")
             if not os.path.exists(self.model_file_dir):
                 raise FileNotFoundError(f"The specified model directory does not exist: {self.model_file_dir}")
         else:

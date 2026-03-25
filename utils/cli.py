@@ -15,11 +15,15 @@ def main():
     log_handler.setFormatter(log_formatter)
     logger.addHandler(log_handler)
 
-    parser = argparse.ArgumentParser(description="Separate audio file into different stems.", formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, max_help_position=60))
+    parser = argparse.ArgumentParser(
+        prog="vsep",
+        description="⚡ vsep - Lightning-fast audio stem separator with AI-powered vocal removal",
+        formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, max_help_position=60)
+    )
 
     parser.add_argument("audio_files", nargs="*", help="The audio file paths or directory to separate, in any common format.", default=argparse.SUPPRESS)
 
-    package_version = metadata.distribution("audio-separator").version
+    package_version = metadata.distribution("vsep").version
 
     version_help = "Show the program's version number and exit."
     debug_help = "Enable debug logging, equivalent to --log_level=debug."
@@ -42,7 +46,7 @@ def main():
     output_format_help = "Output format for separated files, any common format (default: %(default)s). Example: --output_format=MP3"
     output_bitrate_help = "Output bitrate for separated files, any ffmpeg-compatible bitrate (default: %(default)s). Example: --output_bitrate=320k"
     output_dir_help = "Directory to write output files (default: <current dir>). Example: --output_dir=/app/separated"
-    model_file_dir_help = "Model files directory (default: %(default)s or AUDIO_SEPARATOR_MODEL_DIR env var if set). Example: --model_file_dir=/app/models"
+    model_file_dir_help = "Model files directory (default: %(default)s or VSEP_MODEL_DIR env var if set). Example: --model_file_dir=/app/models"
     download_model_only_help = "Download a single model file only, without performing separation."
 
     io_params = parser.add_argument_group("Separation I/O Params")
@@ -51,7 +55,7 @@ def main():
     io_params.add_argument("--output_format", default="FLAC", help=output_format_help)
     io_params.add_argument("--output_bitrate", default=None, help=output_bitrate_help)
     io_params.add_argument("--output_dir", default=None, help=output_dir_help)
-    io_params.add_argument("--model_file_dir", default="/tmp/audio-separator-models/", help=model_file_dir_help)
+    io_params.add_argument("--model_file_dir", default="/tmp/vsep-models/", help=model_file_dir_help)
     io_params.add_argument("--download_model_only", action="store_true", help=download_model_only_help)
 
     invert_spect_help = "Invert secondary stem using spectrogram (default: %(default)s). Example: --invert_spect"
