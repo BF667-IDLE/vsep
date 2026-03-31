@@ -50,7 +50,7 @@ roformer/
 ### Basic Usage with New Parameters
 
 ```python
-from audio_separator.separator.roformer.roformer_loader import RoformerLoader
+from separator.roformer.roformer_loader import RoformerLoader
 
 loader = RoformerLoader()
 
@@ -75,7 +75,7 @@ else:
 ### Configuration Validation
 
 ```python
-from audio_separator.separator.roformer.parameter_validator import ParameterValidator
+from separator.roformer.parameter_validator import ParameterValidator
 
 validator = ParameterValidator()
 issues = validator.validate_all(config, "bs_roformer")
@@ -89,7 +89,7 @@ else:
 ### Configuration Normalization
 
 ```python
-from audio_separator.separator.roformer.configuration_normalizer import ConfigurationNormalizer
+from separator.roformer.configuration_normalizer import ConfigurationNormalizer
 
 normalizer = ConfigurationNormalizer()
 raw_config = {
@@ -106,7 +106,7 @@ print(f"Normalized config has {len(normalized)} parameters")
 
 Detected via config contents (e.g., `freqs_per_bands` vs `num_bands`) and filename hints. Defaults to BSRoformer when ambiguous.
 
-## Integration with Audio Separator
+## Integration with vsep
 
 - Routing remains through the MDXC architecture path; Roformer models are detected and handled by the MDXC separator using the unified `RoformerLoader`.
 - Loader statistics are surfaced via `CommonSeparator.get_roformer_loading_stats()` and logged by the top-level `Separator`.
@@ -130,4 +130,4 @@ python -m pytest tests/integration/test_roformer_*.py -v
 
 ## License
 
-Follows the main Audio Separator project license.
+Follows the main vsep project license.

@@ -1,6 +1,6 @@
-# Configuration for Audio Separator
+# Configuration for vsep
 
-This package contains all configuration variables and URL mappings for the audio-separator.
+This package contains all configuration variables and URL mappings for vsep.
 
 ## Purpose
 
@@ -16,7 +16,7 @@ The configuration system allows you to:
 
 - `UVR_PUBLIC_REPO_URL` - Primary source for public UVR models
 - `UVR_VIP_REPO_URL` - Source for VIP (subscriber-only) models
-- `AUDIO_SEPARATOR_REPO_URL` - Audio-separator specific models and configs
+- `AUDIO_SEPARATOR_REPO_URL` - vsep-specific models and configs
 - `UVR_MODEL_DATA_URL_PREFIX` - Base URL for UVR model parameter data
 
 ### Download Settings
@@ -49,7 +49,7 @@ import config.variables as cfg
 
 # Use a mirror repository
 cfg.UVR_PUBLIC_REPO_URL = "https://mirror.example.com/uvr-models"
-cfg.AUDIO_SEPARATOR_REPO_URL = "https://mirror.example.com/audio-separator"
+cfg.AUDIO_SEPARATOR_REPO_URL = "https://mirror.example.com/vsep"
 
 # Adjust download settings for faster/slower connections
 cfg.MAX_DOWNLOAD_WORKERS = 8  # More parallel downloads

@@ -1,9 +1,9 @@
 ## Remote API Usage 🌐
 
-Audio Separator includes a remote API client that allows you to connect to a deployed Audio Separator API service, enabling you to perform audio separation without running the models locally. The API uses asynchronous processing with job polling for efficient handling of separation tasks.
+vsep includes a remote API client that allows you to connect to a deployed vsep API service, enabling you to perform audio separation without running the models locally. The API uses asynchronous processing with job polling for efficient handling of separation tasks.
 
 To make this easy to set up and use cheaply, we've created a deployment script for [modal.com](https://modal.com) who currently (July 2025) offer $30/mo free in GPU credits.
-Considering [their pricing](https://modal.com/pricing) for execution with an Nvidia T4 is $0.000164 / sec and most audio-separation jobs take less than 2 minutes, that's around $0.019 per separation job.
+Considering [their pricing](https://modal.com/pricing) for execution with an Nvidia T4 is $0.000164 / sec and most separation jobs take less than 2 minutes, that's around $0.019 per separation job.
 With $30/month in free credits, that's over **1,500 GPU-accelerated audio separation jobs per month, for free!**
 
 **✨ Key Features:**
@@ -40,46 +40,46 @@ graph TD
 
 ### Deploying the API Server
 
-To use the remote API functionality, you'll need to deploy the Audio Separator API server. The easiest way is using Modal.com:
+To use the remote API functionality, you'll need to deploy the vsep API server. The easiest way is using Modal.com:
 
 1. **Sign up for Modal.com** at [modal.com](https://modal.com)
 2. **Install the Modal CLI** and authenticate:
-   (Note, modal will need access to the installed project dependencies in whatever virtual environment you're using for audio-separator)
+   (Note, modal will need access to the installed project dependencies in whatever virtual environment you're using for vsep)
    ```bash
    poetry install --extras cpu # need either cpu or gpu to ensure onnxruntime is installed
    pip install modal
    modal setup
    ```
-3. **Deploy the Audio Separator API**:
+3. **Deploy the vsep API**:
    ```bash
-   modal deploy audio_separator/remote/deploy_modal.py
+   modal deploy remote/deploy_modal.py
    ```
 4. **Get your API URL** from the deployment output. It will look like:
    ```
-   https://USERNAME--audio-separator-api.modal.run
+   https://USERNAME--vsep-api.modal.run
    ```
 
 Set this API URL as an environment variable:
 
 ```bash
-export AUDIO_SEPARATOR_API_URL="https://USERNAME--audio-separator-api.modal.run"
+export VSEP_API_URL="https://USERNAME--vsep-api.modal.run"
 ```
 
 Or pass it directly with the `--api_url` parameter.
 
 ### Remote API Client (Python)
 
-You can use the `AudioSeparatorAPIClient` class to interact with a remote Audio Separator API:
+You can use the `AudioSeparatorAPIClient` class to interact with a remote vsep API:
 
 ```python
 import logging
-from audio_separator.remote import AudioSeparatorAPIClient
+from remote import AudioSeparatorAPIClient
 
 # Set up logging
 logger = logging.getLogger(__name__)
 
 # Initialize the API client
-api_client = AudioSeparatorAPIClient("https://USERNAME--audio-separator-api.modal.run", logger)
+api_client = AudioSeparatorAPIClient("https://USERNAME--vsep-api.modal.run", logger)
 
 # Simple example: separate audio and get results
 result = api_client.separate_audio_and_wait("audio.mp3")
@@ -171,7 +171,7 @@ print(f"Server version: {version}")
 
 ### Remote API CLI
 
-Audio Separator also provides a command-line interface for interacting with remote APIs:
+vsep also provides a command-line interface for interacting with remote APIs:
 
 #### Commands
 
@@ -179,19 +179,19 @@ Audio Separator also provides a command-line interface for interacting with remo
 
 ```bash
 # Separate audio file (asynchronous processing)
-audio-separator-remote separate audio.wav --model model_bs_roformer_ep_317_sdr_12.9755.ckpt
+vsep-remote separate audio.wav --model model_bs_roformer_ep_317_sdr_12.9755.ckpt
 
 # Multiple models - upload once, separate with multiple models
-audio-separator-remote separate audio.wav --models model_bs_roformer_ep_317_sdr_12.9755.ckpt UVR-MDX-NET-Inst_HQ_4.onnx htdemucs_6s.yaml
+vsep-remote separate audio.wav --models model_bs_roformer_ep_317_sdr_12.9755.ckpt UVR-MDX-NET-Inst_HQ_4.onnx htdemucs_6s.yaml
 
 # Multiple files
-audio-separator-remote separate audio1.wav audio2.wav audio3.wav
+vsep-remote separate audio1.wav audio2.wav audio3.wav
 
 # Use default model (if not specified)
-audio-separator-remote separate audio.wav
+vsep-remote separate audio.wav
 
 # Advanced separation with custom parameters (all local CLI parameters supported)
-audio-separator-remote separate audio.wav \
+vsep-remote separate audio.wav \
   --model model_bs_roformer_ep_317_sdr_12.9755.ckpt \
   --output_format wav \
   --normalization 0.8 \
@@ -203,32 +203,32 @@ audio-separator-remote separate audio.wav \
 **Check job status:**
 
 ```bash
-audio-separator-remote status <task_id>
+vsep-remote status <task_id>
 ```
 
 **List available models:**
 
 ```bash
 # Pretty formatted list
-audio-separator-remote models
+vsep-remote models
 
 # JSON output
-audio-separator-remote models --format json
+vsep-remote models --format json
 
 # Filter by stem type
-audio-separator-remote models --filter vocals
+vsep-remote models --filter vocals
 ```
 
 **Download specific files:**
 
 ```bash
-audio-separator-remote download <task_id> filename1.wav filename2.wav
+vsep-remote download <task_id> filename1.wav filename2.wav
 ```
 
 **Get version information:**
 
 ```bash
-audio-separator-remote --version
+vsep-remote --version
 ```
 
 #### CLI Options
@@ -271,7 +271,7 @@ All MDX, VR, Demucs, and MDXC parameters from the local CLI are supported:
 
 ```bash
 # Separate with multiple models and custom settings
-audio-separator-remote separate song.mp3 \
+vsep-remote separate song.mp3 \
   --models model_bs_roformer_ep_317_sdr_12.9755.ckpt UVR-MDX-NET-Inst_HQ_4.onnx \
   --output_format wav \
   --normalization 0.8 \
@@ -279,18 +279,18 @@ audio-separator-remote separate song.mp3 \
   --timeout 600
 
 # Separate with custom output names
-audio-separator-remote separate song.mp3 \
+vsep-remote separate song.mp3 \
   --model htdemucs_6s.yaml \
   --custom_output_names '{"Vocals": "vocals", "Drums": "drums", "Bass": "bass", "Other": "other"}'
 
 # Check status with debug logging
-audio-separator-remote status abc123 --debug
+vsep-remote status abc123 --debug
 
 # List vocal separation models in JSON format
-audio-separator-remote models --filter vocals --format json
+vsep-remote models --filter vocals --format json
 
 # Use VR parameters for better vocal isolation
-audio-separator-remote separate vocals.wav \
+vsep-remote separate vocals.wav \
   --model 2_HP-UVR.pth \
   --vr_aggression 15 \
   --vr_window_size 320 \
