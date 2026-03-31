@@ -1,6 +1,6 @@
 """ This file contains the Separator class, to facilitate the separation of stems from audio. """
 
-from importlib import metadata, resources
+from importlib import metadata
 import os
 import sys
 import platform
@@ -285,7 +285,8 @@ class Separator:
         Raises ValueError if the preset is not found or fails validation.
         """
         try:
-            with resources.open_text("audio_separator", "ensemble_presets.json") as f:
+            presets_path = os.path.join(os.path.dirname(__file__), "..", "ensemble_presets.json")
+            with open(presets_path, encoding="utf-8") as f:
                 presets_data = json.load(f)
         except FileNotFoundError:
             raise ValueError("Ensemble presets file not found. The package may be corrupted or improperly installed.")
@@ -323,7 +324,8 @@ class Separator:
         Returns a dict mapping preset IDs to their full preset data.
         """
         try:
-            with resources.open_text("audio_separator", "ensemble_presets.json") as f:
+            presets_path = os.path.join(os.path.dirname(__file__), "..", "ensemble_presets.json")
+            with open(presets_path, encoding="utf-8") as f:
                 presets_data = json.load(f)
         except FileNotFoundError:
             return {}
@@ -637,7 +639,8 @@ class Separator:
         # Load the model scores with error handling
         model_scores = {}
         try:
-            with resources.open_text("audio_separator", "models-scores.json") as f:
+            scores_path = os.path.join(os.path.dirname(__file__), "..", "models-scores.json")
+            with open(scores_path, encoding="utf-8") as f:
                 model_scores = json.load(f)
             self.logger.debug(f"Model scores loaded")
         except json.JSONDecodeError as e:
@@ -662,10 +665,10 @@ class Separator:
                     "download_files": list(files.values()),  # List of all download URLs/filenames
                 }
 
-        # Load the JSON file using importlib.resources
-        with resources.open_text("audio_separator", "models.json") as f:
+        models_path = os.path.join(os.path.dirname(__file__), "..", "models.json")
+        with open(models_path, encoding="utf-8") as f:
             audio_separator_models_list = json.load(f)
-        self.logger.debug(f"Audio-Separator model list loaded")
+        self.logger.debug("Model list loaded")
 
         # Return object with list of model names
         model_files_grouped_by_type = {
@@ -871,9 +874,10 @@ class Separator:
         vr_model_data_object = json.load(open(vr_model_data_path, encoding="utf-8"))
         mdx_model_data_object = json.load(open(mdx_model_data_path, encoding="utf-8"))
 
-        # Load additional model data from audio-separator
-        self.logger.debug("Loading additional model parameters from audio-separator model data file...")
-        with resources.open_text("audio_separator", "model-data.json") as f:
+        # Load additional model data
+        self.logger.debug("Loading additional model parameters from model data file...")
+        model_data_path = os.path.join(os.path.dirname(__file__), "..", "model-data.json")
+        with open(model_data_path, encoding="utf-8") as f:
             audio_separator_model_data = json.load(f)
 
         # Merge the model data objects, with audio-separator data taking precedence
@@ -969,7 +973,7 @@ class Separator:
         self.logger.debug(f"Importing module for model type {model_type}: {separator_classes[model_type]}")
 
         module_name, class_name = separator_classes[model_type].split(".")
-        module = importlib.import_module(f"audio_separator.separator.architectures.{module_name}")
+        module = importlib.import_module(f"separator.architectures.{module_name}")
         separator_class = getattr(module, class_name)
 
         self.logger.debug(f"Instantiating separator class for model type {model_type}: {separator_class}")
