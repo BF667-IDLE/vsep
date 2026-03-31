@@ -172,8 +172,9 @@ class Separator:
 
         # Skip initialization logs if info_only is True
         if not info_only:
-            package_version = self.get_package_distribution("audio-separator").version
-            self.logger.info(f"Separator version {package_version} instantiating with output_dir: {output_dir}, output_format: {output_format}")
+            package_version = self.get_package_distribution("vsep") or self.get_package_distribution("audio-separator")
+            if package_version:
+                self.logger.info(f"Separator version {package_version.version} instantiating with output_dir: {output_dir}, output_format: {output_format}")
 
         if output_dir is None:
             output_dir = os.getcwd()
