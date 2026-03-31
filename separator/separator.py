@@ -42,30 +42,33 @@ from config import (
     get_repo_url,
     get_mdx_yaml_url,
     get_fallback_url,
+    # Logging
+    DEFAULT_LOG_LEVEL,
+    DEFAULT_LOG_FORMAT,
+    # Separator defaults
+    DEFAULT_MODEL_FILE_DIR,
+    DEFAULT_OUTPUT_FORMAT,
+    DEFAULT_SAMPLE_RATE,
+    DEFAULT_NORMALIZATION_THRESHOLD,
+    DEFAULT_AMPLIFICATION_THRESHOLD,
+    DEFAULT_OUTPUT_SINGLE_STEM,
+    DEFAULT_INVERT_USING_SPEC,
+    DEFAULT_USE_SOUNDFILE,
+    DEFAULT_USE_AUTOCAST,
+    DEFAULT_USE_DIRECTML,
+    DEFAULT_CHUNK_DURATION,
+    # Ensemble
+    VALID_ENSEMBLE_ALGORITHMS,
+    DEFAULT_ENSEMBLE_ALGORITHM,
+    # Stem mapping
+    STEM_NAME_MAP,
+    # Architecture defaults
+    DEFAULT_MDX_PARAMS,
+    DEFAULT_VR_PARAMS,
+    DEFAULT_DEMUCS_PARAMS,
+    DEFAULT_MDXC_PARAMS,
 )
 
-# Mapping of common stem name variations to canonical names for ensemble grouping.
-STEM_NAME_MAP = {
-    "vocals": "Vocals",
-    "instrumental": "Instrumental",
-    "inst": "Instrumental",
-    "karaoke": "Instrumental",
-    "other": "Other",
-    "no_vocals": "Instrumental",
-    "drums": "Drums",
-    "bass": "Bass",
-    "guitar": "Guitar",
-    "piano": "Piano",
-    "synthesizer": "Synthesizer",
-    "strings": "Strings",
-    "woodwinds": "Woodwinds",
-    "brass": "Brass",
-    "wind inst": "Wind Inst",
-    "lead vocals": "Lead Vocals",
-    "backing vocals": "Backing Vocals",
-    "primary stem": "Primary Stem",
-    "secondary stem": "Secondary Stem",
-}
 
 
 class Separator:
@@ -126,25 +129,25 @@ class Separator:
 
     def __init__(
         self,
-        log_level=logging.INFO,
+        log_level=DEFAULT_LOG_LEVEL,
         log_formatter=None,
-        model_file_dir="/tmp/audio-separator-models/",
+        model_file_dir=DEFAULT_MODEL_FILE_DIR,
         output_dir=None,
-        output_format="WAV",
+        output_format=DEFAULT_OUTPUT_FORMAT,
         output_bitrate=None,
-        normalization_threshold=0.9,
-        amplification_threshold=0.0,
-        output_single_stem=None,
-        invert_using_spec=False,
-        sample_rate=44100,
-        use_soundfile=False,
-        use_autocast=False,
-        use_directml=False,
-        chunk_duration=None,
-        mdx_params={"hop_length": 1024, "segment_size": 256, "overlap": 0.25, "batch_size": 1, "enable_denoise": False},
-        vr_params={"batch_size": 1, "window_size": 512, "aggression": 5, "enable_tta": False, "enable_post_process": False, "post_process_threshold": 0.2, "high_end_process": False},
-        demucs_params={"segment_size": "Default", "shifts": 2, "overlap": 0.25, "segments_enabled": True},
-        mdxc_params={"segment_size": 256, "override_model_segment_size": False, "batch_size": 1, "overlap": 8, "pitch_shift": 0},
+        normalization_threshold=DEFAULT_NORMALIZATION_THRESHOLD,
+        amplification_threshold=DEFAULT_AMPLIFICATION_THRESHOLD,
+        output_single_stem=DEFAULT_OUTPUT_SINGLE_STEM,
+        invert_using_spec=DEFAULT_INVERT_USING_SPEC,
+        sample_rate=DEFAULT_SAMPLE_RATE,
+        use_soundfile=DEFAULT_USE_SOUNDFILE,
+        use_autocast=DEFAULT_USE_AUTOCAST,
+        use_directml=DEFAULT_USE_DIRECTML,
+        chunk_duration=DEFAULT_CHUNK_DURATION,
+        mdx_params=None,
+        vr_params=None,
+        demucs_params=None,
+        mdxc_params=None,
         ensemble_algorithm=None,
         ensemble_weights=None,
         ensemble_preset=None,
@@ -159,7 +162,7 @@ class Separator:
         self.log_handler = logging.StreamHandler()
 
         if self.log_formatter is None:
-            self.log_formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(module)s - %(message)s")
+            self.log_formatter = logging.Formatter(DEFAULT_LOG_FORMAT)
 
         self.log_handler.setFormatter(self.log_formatter)
 
@@ -250,11 +253,16 @@ class Separator:
 
         # Apply default algorithm if still not set (no preset, no explicit arg)
         if self.ensemble_algorithm is None:
-            self.ensemble_algorithm = "avg_wave"
+            self.ensemble_algorithm = DEFAULT_ENSEMBLE_ALGORITHM
 
         # These are parameters which users may want to configure so we expose them to the top-level Separator class,
         # even though they are specific to a single model architecture
-        self.arch_specific_params = {"MDX": mdx_params, "VR": vr_params, "Demucs": demucs_params, "MDXC": mdxc_params}
+        self.arch_specific_params = {
+            "MDX": mdx_params if mdx_params is not None else DEFAULT_MDX_PARAMS,
+            "VR": vr_params if vr_params is not None else DEFAULT_VR_PARAMS,
+            "Demucs": demucs_params if demucs_params is not None else DEFAULT_DEMUCS_PARAMS,
+            "MDXC": mdxc_params if mdxc_params is not None else DEFAULT_MDXC_PARAMS,
+        }
 
         self.torch_device = None
         self.torch_device_cpu = None
@@ -271,11 +279,7 @@ class Separator:
         if not info_only:
             self.setup_accelerated_inferencing_device()
 
-    VALID_ENSEMBLE_ALGORITHMS = [
-        "avg_wave", "median_wave", "min_wave", "max_wave",
-        "avg_fft", "median_fft", "min_fft", "max_fft",
-        "uvr_max_spec", "uvr_min_spec", "ensemble_wav",
-    ]
+    VALID_ENSEMBLE_ALGORITHMS = VALID_ENSEMBLE_ALGORITHMS
 
     def _load_ensemble_preset(self, preset_name):
         """

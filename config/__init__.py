@@ -1,4 +1,4 @@
-"""Configuration package for audio-separator."""
+"""Configuration package for vsep."""
 
 from config.variables import (
     # Repository URLs
@@ -23,6 +23,31 @@ from config.variables import (
     get_repo_url,
     get_mdx_yaml_url,
     get_fallback_url,
+    # Logging
+    DEFAULT_LOG_LEVEL,
+    DEFAULT_LOG_FORMAT,
+    # Separator defaults
+    DEFAULT_MODEL_FILE_DIR,
+    DEFAULT_OUTPUT_FORMAT,
+    DEFAULT_SAMPLE_RATE,
+    DEFAULT_NORMALIZATION_THRESHOLD,
+    DEFAULT_AMPLIFICATION_THRESHOLD,
+    DEFAULT_OUTPUT_SINGLE_STEM,
+    DEFAULT_INVERT_USING_SPEC,
+    DEFAULT_USE_SOUNDFILE,
+    DEFAULT_USE_AUTOCAST,
+    DEFAULT_USE_DIRECTML,
+    DEFAULT_CHUNK_DURATION,
+    # Ensemble
+    VALID_ENSEMBLE_ALGORITHMS,
+    DEFAULT_ENSEMBLE_ALGORITHM,
+    # Stem mapping
+    STEM_NAME_MAP,
+    # Architecture default params
+    DEFAULT_MDX_PARAMS,
+    DEFAULT_VR_PARAMS,
+    DEFAULT_DEMUCS_PARAMS,
+    DEFAULT_MDXC_PARAMS,
 )
 
 __all__ = [
@@ -48,4 +73,29 @@ __all__ = [
     "get_repo_url",
     "get_mdx_yaml_url",
     "get_fallback_url",
+    # Logging
+    "DEFAULT_LOG_LEVEL",
+    "DEFAULT_LOG_FORMAT",
+    # Separator defaults
+    "DEFAULT_MODEL_FILE_DIR",
+    "DEFAULT_OUTPUT_FORMAT",
+    "DEFAULT_SAMPLE_RATE",
+    "DEFAULT_NORMALIZATION_THRESHOLD",
+    "DEFAULT_AMPLIFICATION_THRESHOLD",
+    "DEFAULT_OUTPUT_SINGLE_STEM",
+    "DEFAULT_INVERT_USING_SPEC",
+    "DEFAULT_USE_SOUNDFILE",
+    "DEFAULT_USE_AUTOCAST",
+    "DEFAULT_USE_DIRECTML",
+    "DEFAULT_CHUNK_DURATION",
+    # Ensemble
+    "VALID_ENSEMBLE_ALGORITHMS",
+    "DEFAULT_ENSEMBLE_ALGORITHM",
+    # Stem mapping
+    "STEM_NAME_MAP",
+    # Architecture default params
+    "DEFAULT_MDX_PARAMS",
+    "DEFAULT_VR_PARAMS",
+    "DEFAULT_DEMUCS_PARAMS",
+    "DEFAULT_MDXC_PARAMS",
 ]
