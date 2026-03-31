@@ -7,6 +7,96 @@ import os
 from importlib import metadata
 
 
+def _print_model_table(model_list, limit=None):
+    """Print models grouped by architecture type in a formatted table."""
+    type_colors = {"VR": "36", "MDX": "33", "Demucs": "34", "MDXC": "35"}
+    total_count = 0
+
+    for model_type in ["VR", "MDX", "Demucs", "MDXC"]:
+        models = model_list.get(model_type, {})
+        if not models:
+            continue
+
+        entries = list(models.items())
+        if limit and limit > 0:
+            entries = entries[:limit]
+
+        print(f"\n  [{model_type}]  ({len(models)} models)" + (f"  showing first {len(entries)}" if limit and len(models) > limit else ""))
+
+        # Column widths
+        name_w = max(len("Display Name"), max(len(n) for n, _ in entries))
+        file_w = max(len("Filename"), max(len(d["filename"]) for _, d in entries))
+
+        print(f"  {'─' * (name_w + file_w + 6)}")
+        print(f"  {'Display Name':<{name_w}}  {'Filename'}")
+        print(f"  {'─' * (name_w + file_w + 6)}")
+
+        for name, data in entries:
+            fn = data["filename"]
+            print(f"  {name:<{name_w}}  {fn}")
+
+        total_count += len(entries)
+
+    print(f"\n  Total: {total_count} models shown"
+          + (f" (of {sum(len(v) for v in model_list.values())} available)" if limit else ""))
+
+
+def _print_model_categories(model_list):
+    """Print models organized by task category (Vocals, Instrumental, etc)."""
+    categories = {
+        "Vocals": [],
+        "Instrumental": [],
+        "Multi-Stem": [],
+        "Reverb/Echo Cleanup": [],
+        "Drums/Bass/Other": [],
+        "Denoise/Cleanup": [],
+    }
+
+    vocal_kw = ["vocal", "karaoke", "crowd", "bleed", "fullness", "male-female", "bandit", "scnet",
+                "revive", "resurrection", "ft", "instvoc", "viperx"]
+    inst_kw = ["inst", "instrumental", "exp ", "phantom", "hp2", "sp ", "mid ", "wind", "mgm", "duality"]
+    multi_kw = ["demucs", "6s", "male-female", "4-stem", "4s"]
+    reverb_kw = ["reverb", "echo", "dereverb", "deecho"]
+    drum_kw = ["drum", "bass", "other", "kuielab"]
+    denoise_kw = ["denoise", "d1581", "aspiration", "debleed"]
+
+    for model_type, models in model_list.items():
+        for name, data in models.items():
+            stems = data.get("stems") or []
+            target = data.get("target_stem", "")
+            fn = data["filename"]
+
+            name_lower = name.lower()
+            stem_str = " ".join(stems).lower()
+
+            if any(k in name_lower for k in multi_kw) or len(stems) > 2:
+                categories["Multi-Stem"].append((name, fn, model_type, stems))
+            elif any(k in name_lower for k in reverb_kw):
+                categories["Reverb/Echo Cleanup"].append((name, fn, model_type, stems))
+            elif any(k in name_lower for k in drum_kw):
+                categories["Drums/Bass/Other"].append((name, fn, model_type, stems))
+            elif any(k in name_lower for k in denoise_kw) or "noise" in name_lower:
+                categories["Denoise/Cleanup"].append((name, fn, model_type, stems))
+            elif any(k in name_lower for k in inst_kw) or (target.lower() == "instrumental" and not any(k in name_lower for k in vocal_kw)):
+                categories["Instrumental"].append((name, fn, model_type, stems))
+            elif any(k in name_lower for k in vocal_kw) or target.lower() == "vocals":
+                categories["Vocals"].append((name, fn, model_type, stems))
+            else:
+                categories["Vocals"].append((name, fn, model_type, stems))
+
+    for cat_name, entries in categories.items():
+        if not entries:
+            continue
+        print(f"\n  [{cat_name}]  ({len(entries)} models)")
+        print(f"  {'─' * 72}")
+        for name, fn, mtype, stems in entries:
+            stem_info = ", ".join(stems[:4]) if stems else "?"
+            print(f"    {name:<52} [{mtype}] {stem_info}")
+
+    total = sum(len(v) for v in categories.values())
+    print(f"\n  Total: {total} models across {sum(1 for v in categories.values() if v)} categories")
+
+
 def main():
     """Main entry point for the CLI."""
     logger = logging.getLogger(__name__)
@@ -28,7 +118,7 @@ def main():
     version_help = "Show the program's version number and exit."
     debug_help = "Enable debug logging, equivalent to --log_level=debug."
     env_info_help = "Print environment information and exit."
-    list_models_help = "List all supported models and exit. Use --list_filter to filter/sort the list and --list_limit to show only top N results."
+    list_models_help = "List all supported models and exit. Use --list_type to filter by architecture, --list_stem to filter by output stem."
     log_level_help = "Log level, e.g. info, debug, warning (default: %(default)s)."
 
     info_params = parser.add_argument_group("Info and Debugging")
@@ -37,9 +127,10 @@ def main():
     info_params.add_argument("-e", "--env_info", action="store_true", help=env_info_help)
     info_params.add_argument("-l", "--list_models", action="store_true", help=list_models_help)
     info_params.add_argument("--log_level", default="info", help=log_level_help)
-    info_params.add_argument("--list_filter", help="Filter and sort the model list by 'name', 'filename', or any stem e.g. vocals, instrumental, drums")
-    info_params.add_argument("--list_limit", type=int, help="Limit the number of models shown")
-    info_params.add_argument("--list_format", choices=["pretty", "json"], default="pretty", help="Format for listing models: 'pretty' for formatted output, 'json' for raw JSON dump")
+    info_params.add_argument("--list_type", choices=["VR", "MDX", "Demucs", "MDXC"], help="Filter models by architecture type (VR, MDX, Demucs, MDXC)")
+    info_params.add_argument("--list_stem", help="Filter models that produce a specific stem, e.g. vocals, drums, bass, other, instrumental")
+    info_params.add_argument("--list_limit", type=int, help="Limit the number of models shown per architecture group")
+    info_params.add_argument("--list_format", choices=["pretty", "json", "categories"], default="pretty", help="Output format: 'pretty' for grouped table, 'json' for raw JSON, 'categories' for task-based categories")
 
     model_filename_help = "Model to use for separation (default: %(default)s). Example: -m model1.ckpt"
     extra_models_help = "Additional models for ensembling. Requires -m for the primary model. Example: --extra_models model2.onnx model3.ckpt"
@@ -162,34 +253,17 @@ def main():
 
     if args.list_models:
         separator = Separator(info_only=True)
+        model_list = separator.list_models(
+            model_type=args.list_type,
+            filter_stem=args.list_stem,
+        )
 
         if args.list_format == "json":
-            model_list = separator.list_supported_model_files()
             print(json.dumps(model_list, indent=2))
+        elif args.list_format == "categories":
+            _print_model_categories(model_list)
         else:
-            models = separator.get_simplified_model_list(filter_sort_by=args.list_filter)
-
-            # Apply limit if specified
-            if args.list_limit and args.list_limit > 0:
-                models = dict(list(models.items())[: args.list_limit])
-
-            # Calculate maximum widths for each column
-            filename_width = max(len("Model Filename"), max(len(filename) for filename in models.keys()))
-            arch_width = max(len("Arch"), max(len(info["Type"]) for info in models.values()))
-            stems_width = max(len("Output Stems (SDR)"), max(len(", ".join(info["Stems"])) for info in models.values()))
-            name_width = max(len("Friendly Name"), max(len(info["Name"]) for info in models.values()))
-
-            # Calculate total width for separator line
-            total_width = filename_width + arch_width + stems_width + name_width + 15  # 15 accounts for spacing between columns
-
-            # Format the output with dynamic widths and extra spacing
-            print("-" * total_width)
-            print(f"{'Model Filename':<{filename_width}}  {'Arch':<{arch_width}}  {'Output Stems (SDR)':<{stems_width}}  {'Friendly Name'}")
-            print("-" * total_width)
-
-            for filename, info in models.items():
-                stems = ", ".join(info["Stems"])
-                print(f"{filename:<{filename_width}}  {info['Type']:<{arch_width}}  {stems:<{stems_width}}  {info['Name']}")
+            _print_model_table(model_list, limit=args.list_limit)
 
         sys.exit(0)
 
