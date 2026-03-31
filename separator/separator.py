@@ -170,10 +170,6 @@ class Separator:
         if log_level > logging.DEBUG:
             warnings.filterwarnings("ignore")
 
-        # Skip initialization logs if info_only is True
-        if not info_only:
-            self.logger.info(f"Separator instantiating with output_dir: {output_dir}, output_format: {output_format}")
-
         if output_dir is None:
             output_dir = os.getcwd()
             if not info_only:
