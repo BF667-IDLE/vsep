@@ -172,9 +172,7 @@ class Separator:
 
         # Skip initialization logs if info_only is True
         if not info_only:
-            package_version = self.get_package_distribution("vsep") or self.get_package_distribution("audio-separator")
-            if package_version:
-                self.logger.info(f"Separator version {package_version.version} instantiating with output_dir: {output_dir}, output_format: {output_format}")
+            self.logger.info(f"Separator instantiating with output_dir: {output_dir}, output_format: {output_format}")
 
         if output_dir is None:
             output_dir = os.getcwd()
@@ -381,19 +379,11 @@ class Separator:
         """
         This method logs the ONNX Runtime package versions, including the GPU and Silicon packages if available.
         """
-        onnxruntime_gpu_package = self.get_package_distribution("onnxruntime-gpu")
-        onnxruntime_silicon_package = self.get_package_distribution("onnxruntime-silicon")
-        onnxruntime_cpu_package = self.get_package_distribution("onnxruntime")
-        onnxruntime_dml_package = self.get_package_distribution("onnxruntime-directml")
-
-        if onnxruntime_gpu_package is not None:
-            self.logger.info(f"ONNX Runtime GPU package installed with version: {onnxruntime_gpu_package.version}")
-        if onnxruntime_silicon_package is not None:
-            self.logger.info(f"ONNX Runtime Silicon package installed with version: {onnxruntime_silicon_package.version}")
-        if onnxruntime_cpu_package is not None:
-            self.logger.info(f"ONNX Runtime CPU package installed with version: {onnxruntime_cpu_package.version}")
-        if onnxruntime_dml_package is not None:
-            self.logger.info(f"ONNX Runtime DirectML package installed with version: {onnxruntime_dml_package.version}")
+        for pkg in ("onnxruntime-gpu", "onnxruntime-silicon", "onnxruntime", "onnxruntime-directml"):
+            try:
+                self.logger.info(f"ONNX Runtime {pkg} installed with version: {metadata.version(pkg)}")
+            except metadata.PackageNotFoundError:
+                pass
 
     def setup_torch_device(self, system_info):
         """
@@ -401,8 +391,6 @@ class Separator:
         """
         hardware_acceleration_enabled = False
         ort_providers = ort.get_available_providers()
-        has_torch_dml_installed = self.get_package_distribution("torch_directml")
-
         self.torch_device_cpu = torch.device("cpu")
 
         if torch.cuda.is_available():
@@ -411,7 +399,7 @@ class Separator:
         elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available() and system_info.processor == "arm":
             self.configure_mps(ort_providers)
             hardware_acceleration_enabled = True
-        elif self.use_directml and has_torch_dml_installed:
+        elif self.use_directml:
             import torch_directml
             if torch_directml.is_available():
                 self.configure_dml(ort_providers)
@@ -463,16 +451,6 @@ class Separator:
             self.onnx_execution_provider = ["DmlExecutionProvider"]
         else:
             self.logger.warning("DmlExecutionProvider not available in ONNXruntime, so acceleration will NOT be enabled")
-
-    def get_package_distribution(self, package_name):
-        """
-        This method returns the package distribution for a given package name if installed, or None otherwise.
-        """
-        try:
-            return metadata.distribution(package_name)
-        except metadata.PackageNotFoundError:
-            self.logger.debug(f"Python package: {package_name} not installed")
-            return None
 
     def get_model_hash(self, model_path):
         """
