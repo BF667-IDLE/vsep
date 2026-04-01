@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 200" width="600" height="200">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1a1a2e"/>
+      <stop offset="50%" stop-color="#16213e"/>
+      <stop offset="100%" stop-color="#2d1b69"/>
+    </linearGradient>
+    <linearGradient id="glow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366f1" stop-opacity="0.3"/>
+      <stop offset="50%" stop-color="#8b5cf6" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#a78bfa" stop-opacity="0.3"/>
+    </linearGradient>
+    <linearGradient id="heartGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f472b6"/>
+      <stop offset="100%" stop-color="#e879f9"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="600" height="200" rx="16" ry="16" fill="url(#bg)"/>
+  <rect width="600" height="200" rx="16" ry="16" fill="url(#glow)"/>
+
+  <!-- Sound wave bars (decorative, matching logo style) -->
+  <g opacity="0.25">
+    <rect x="20" y="85" width="5" height="30" rx="2.5" fill="#8b5cf6"/>
+    <rect x="32" y="70" width="5" height="60" rx="2.5" fill="#7c3aed"/>
+    <rect x="44" y="55" width="5" height="90" rx="2.5" fill="#6d28d9"/>
+    <rect x="56" y="45" width="5" height="110" rx="2.5" fill="#5b21b6"/>
+    <rect x="68" y="60" width="5" height="80" rx="2.5" fill="#6d28d9"/>
+    <rect x="80" y="75" width="5" height="50" rx="2.5" fill="#7c3aed"/>
+  </g>
+
+  <!-- vsep text (small, subtle) -->
+  <text x="300" y="65" text-anchor="middle" font-family="'Segoe UI', system-ui, -apple-system, sans-serif" font-size="16" font-weight="600" fill="#8b5cf6" opacity="0.6" letter-spacing="4">VSEP</text>
+
+  <!-- Main text -->
+  <text x="300" y="105" text-anchor="middle" font-family="'Segoe UI', system-ui, -apple-system, sans-serif" font-size="28" font-weight="700" fill="#e2e8f0" letter-spacing="1">Support This Project</text>
+
+  <!-- Heart -->
+  <path d="M288,125 L293,120 C293,116 297,113 300,113 C303,113 307,116 307,120 L312,125 C312,125 307,132 300,138 C293,132 288,125 288,125Z" fill="url(#heartGrad)" opacity="0.9"/>
+
+  <!-- Subtitle -->
+  <text x="300" y="165" text-anchor="middle" font-family="'Segoe UI', system-ui, -apple-system, sans-serif" font-size="12" fill="#94a3b8" letter-spacing="0.5">Open-source · MIT Licensed · Built with love</text>
+
+  <!-- Right side sound wave bars (mirrored) -->
+  <g opacity="0.25">
+    <rect x="515" y="85" width="5" height="30" rx="2.5" fill="#8b5cf6"/>
+    <rect x="527" y="75" width="5" height="50" rx="2.5" fill="#7c3aed"/>
+    <rect x="539" y="60" width="5" height="80" rx="2.5" fill="#6d28d9"/>
+    <rect x="551" y="45" width="5" height="110" rx="2.5" fill="#5b21b6"/>
+    <rect x="563" y="55" width="5" height="90" rx="2.5" fill="#6d28d9"/>
+    <rect x="575" y="70" width="5" height="60" rx="2.5" fill="#7c3aed"/>
+  </g>
+
+  <!-- Border -->
+  <rect width="598" height="198" x="1" y="1" rx="15" ry="15" fill="none" stroke="#6366f1" stroke-opacity="0.15" stroke-width="1"/>
+</svg>

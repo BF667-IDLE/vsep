@@ -567,3 +567,5 @@ vsep is built on the shoulders of giants. We gratefully acknowledge:
 | **Discussions** | [GitHub Discussions](https://github.com/BF667-IDLE/vsep/discussions) |
 | **Try It Free** | [Google Colab Demo](https://colab.research.google.com/github/BF667-IDLE/vsep/blob/main/notebooks/vsep_demo.ipynb) |
 | **Support UVR** | [Patreon](https://patreon.com/uvr) ❤️ |
+
+<a href="https://patreon.com/uvr"><img src="docs/support_banner.png" alt="Support This Project"/></a>
