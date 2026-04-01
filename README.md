@@ -12,6 +12,7 @@
   <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.10%2B-blue.svg" alt="Python 3.10+"/></a>
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"/></a>
   <a href="https://colab.research.google.com/github/BF667-IDLE/vsep/blob/main/notebooks/vsep_demo.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Colab Demo"/></a>
+  <a href="https://patreon.com/uvr"><img src="https://img.shields.io/badge/Support%20UVR-Patreon-%23FF424D?logo=patreon&logoColor=white" alt="Support UVR on Patreon"/></a>
 </p>
 
 **vsep** is a high-performance audio stem separator that splits music into individual components — vocals, drums, bass, and other instruments — using state-of-the-art AI models originally developed for [Ultimate Vocal Remover (UVR)](https://ultimatevocalremover.com/). It supports 100+ pre-trained models across four major architectures (Demucs, MDX-Net, VR, and Roformer/MDXC), runs on any hardware from CPUs to NVIDIA GPUs and Apple Silicon, and offers parallel model downloads with resume support for a seamless experience. Whether you are a music producer isolating vocals for a remix, a podcaster cleaning up background noise, or a researcher experimenting with source separation, vsep provides a simple CLI and Python API to get results fast.
@@ -547,7 +548,7 @@ This project is licensed under the **MIT License** — see the [LICENSE](LICENSE
 
 vsep is built on the shoulders of giants. We gratefully acknowledge:
 
-- **[Anjok07](https://patreon.com/uvr)** — Primary model trainer and creator of Ultimate Vocal Remover, whose models form the backbone of vsep.
+- **[Anjok07](https://patreon.com/uvr)** — Primary model trainer and creator of Ultimate Vocal Remover, whose models form the backbone of vsep. Please consider [supporting UVR on Patreon](https://patreon.com/uvr) to fund ongoing model training.
 - **[TRvlvr](https://github.com/TRvlvr)** — Maintainer of the UVR model repository and application data.
 - **[NomadKaraoke](https://github.com/nomadkaraoke)** — Creator of the [python-audio-separator](https://github.com/nomadkaraoke/python-audio-separator) project, which vsep extends.
 - **Meta Research** — Developers of the [Demucs](https://github.com/facebookresearch/demucs) architecture.
@@ -563,3 +564,4 @@ vsep is built on the shoulders of giants. We gratefully acknowledge:
 | **Feature Requests** | [GitHub Issues](https://github.com/BF667-IDLE/vsep/issues) |
 | **Discussions** | [GitHub Discussions](https://github.com/BF667-IDLE/vsep/discussions) |
 | **Try It Free** | [Google Colab Demo](https://colab.research.google.com/github/BF667-IDLE/vsep/blob/main/notebooks/vsep_demo.ipynb) |
+| **Support UVR** | [Patreon](https://patreon.com/uvr) ❤️ |
