@@ -302,3 +302,48 @@ MODEL_CATALOG = {
     "BS Roformer Instrumental Resurrection (Gabox)": "bs_roformer_instrumental_resurrection_gabox.ckpt",
     "BS Roformer SW (jarredou)": "BS-Roformer-SW.ckpt",
 }
+
+# =============================================================================
+# MODEL CATEGORIES  (keyword rules for auto-classification)
+# =============================================================================
+# Ordered list: first matching rule wins.  Each entry is
+#   (category_label, [keyword, ...])
+# The classification function `classify_model()` walks this list and
+# returns the label of the first category whose keyword is found in
+# the model name (case-insensitive substring match).
+#
+# These categories are used by the Colab notebook to present a grouped
+# model selector, and can also be used by the CLI.
+# =============================================================================
+
+MODEL_CATEGORIES = [
+    ("🎤 Vocals",           ["vocal", "revive", "resurrection",
+                             "kim ft", "syhft", "big beta"]),
+    ("🎸 Instrumental",     ["instrumental", "inst_v", "inst_hq", "inst ", "inst-",
+                             "bleedless", "bleed_suppressor", "suppressor",
+                             "instv5", "instv6", "instv7", "instv8",
+                             "fv7z", "fv8", "fvx"]),
+    ("🎤 Karaoke",          ["karaoke"]),
+    ("🔊 De-Reverb",        ["deverb", "de-reverb"]),
+    ("🧹 Denoise",          ["denoise", "debleed"]),
+    ("🥁 Drums / Percussion", ["drum"]),
+    ("🎵 Multi-Stem",       ["demucs", "htdemucs"]),
+    ("🏷️ Specialty",        ["crowd", "chorus", "male_female", "male-female",
+                             "aspiration", "bve", "sw"]),
+]
+
+
+def classify_model(name: str) -> str:
+    """Return the category label for *name* using MODEL_CATEGORIES rules.
+
+    Falls back to "📦 Other" when no rule matches.
+    """
+    low = name.lower()
+    for label, keywords in MODEL_CATEGORIES:
+        for kw in keywords:
+            if kw in low:
+                return label
+    # Architecture-based fallback
+    if "mdx" in low and "inst" in low:
+        return "🎸 Instrumental"
+    return "📦 Other"
