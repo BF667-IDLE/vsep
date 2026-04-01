@@ -316,10 +316,10 @@ class CommonSeparator:
             self.logger.warning("Warning: stem_source array is near-silent or empty.")
             return False
 
-        # If output_dir is specified, create it and join it with stem_path
+        # output_dir is already included in stem_path by get_stem_output_path()
+        # Just ensure the directory exists
         if self.output_dir:
             os.makedirs(self.output_dir, exist_ok=True)
-            stem_path = os.path.join(self.output_dir, stem_path)
 
         self.logger.debug(f"Audio data shape before processing: {stem_source.shape}")
         self.logger.debug(f"Data type before conversion: {stem_source.dtype}")
@@ -407,10 +407,10 @@ class CommonSeparator:
             self.logger.warning("Warning: stem_source array is near-silent or empty.")
             return False
 
-        # If output_dir is specified, create it and join it with stem_path
+        # output_dir is already included in stem_path by get_stem_output_path()
+        # Just ensure the directory exists
         if self.output_dir:
             os.makedirs(self.output_dir, exist_ok=True)
-            stem_path = os.path.join(self.output_dir, stem_path)
 
         # Determine the output format from the file extension
         output_format = stem_path.lower().split(".")[-1]
@@ -517,6 +517,7 @@ class CommonSeparator:
     def get_stem_output_path(self, stem_name, custom_output_names):
         """
         Gets the output path for a stem based on the stem name and custom output names.
+        Includes output_dir in the path so that callers get the full, usable path.
         """
         # Convert custom_output_names keys to lowercase for case-insensitive comparison
         if custom_output_names:
@@ -524,14 +525,21 @@ class CommonSeparator:
             stem_name_lower = stem_name.lower()
             if stem_name_lower in custom_output_names_lower:
                 sanitized_custom_name = self.sanitize_filename(custom_output_names_lower[stem_name_lower])
-                return os.path.join(f"{sanitized_custom_name}.{self.output_format.lower()}")
+                filename = f"{sanitized_custom_name}.{self.output_format.lower()}"
+            else:
+                sanitized_audio_base = self.sanitize_filename(self.audio_file_base)
+                sanitized_stem_name = self.sanitize_filename(stem_name)
+                sanitized_model_name = self.sanitize_filename(self.model_name)
+                filename = f"{sanitized_audio_base}_({sanitized_stem_name})_{sanitized_model_name}.{self.output_format.lower()}"
+        else:
+            sanitized_audio_base = self.sanitize_filename(self.audio_file_base)
+            sanitized_stem_name = self.sanitize_filename(stem_name)
+            sanitized_model_name = self.sanitize_filename(self.model_name)
+            filename = f"{sanitized_audio_base}_({sanitized_stem_name})_{sanitized_model_name}.{self.output_format.lower()}"
 
-        sanitized_audio_base = self.sanitize_filename(self.audio_file_base)
-        sanitized_stem_name = self.sanitize_filename(stem_name)
-        sanitized_model_name = self.sanitize_filename(self.model_name) 
-
-        filename = f"{sanitized_audio_base}_({sanitized_stem_name})_{sanitized_model_name}.{self.output_format.lower()}"
-        return os.path.join(filename)
+        if self.output_dir:
+            return os.path.join(self.output_dir, filename)
+        return filename
     
     def _detect_roformer_model(self):
         """
