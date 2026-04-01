@@ -717,6 +717,38 @@ class Separator:
 
         return model_files_grouped_by_type
 
+    def list_models(self, model_type=None, filter_stem=None):
+        """
+        Convenience method to list available models with optional filtering.
+        Wraps list_supported_model_files() with common filter options.
+
+        Args:
+            model_type: Optional architecture filter (e.g. 'VR', 'MDX', 'MDXC', 'Demucs')
+            filter_stem: Optional keyword filter on model name (e.g. 'vocal', 'drum', 'karaoke')
+
+        Returns:
+            Dict of model_type -> {display_name: model_info}
+        """
+        all_models = self.list_supported_model_files()
+
+        if model_type:
+            key = model_type.upper()
+            all_models = {k: v for k, v in all_models.items() if k.upper() == key}
+
+        if filter_stem:
+            kw = filter_stem.lower()
+            filtered = {}
+            for mtype, models in all_models.items():
+                matching = {
+                    name: info for name, info in models.items()
+                    if kw in name.lower()
+                }
+                if matching:
+                    filtered[mtype] = matching
+            all_models = filtered
+
+        return all_models
+
     def print_uvr_vip_message(self):
         """
         This method prints a message to the user if they have downloaded a VIP model, reminding them to support Anjok07 on Patreon.
