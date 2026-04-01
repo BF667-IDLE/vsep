@@ -154,8 +154,11 @@ class DemucsSeparator(CommonSeparator):
             stem_path = self.get_stem_output_path(stem_name, custom_output_names)
             stem_source = source[stem_value].T
 
-            self.final_process(stem_path, stem_source, stem_name)
-            output_files.append(stem_path)
+            _, write_ok = self.final_process(stem_path, stem_source, stem_name)
+            if write_ok:
+                output_files.append(stem_path)
+            else:
+                self.logger.error(f"Failed to write {stem_name} stem to {stem_path}")
 
         return output_files
 

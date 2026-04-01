@@ -165,11 +165,12 @@ class CommonSeparator:
     def final_process(self, stem_path, source, stem_name):
         """
         Finalizes the processing of a stem by writing the audio to a file and returning the processed source.
+        Returns True if the write was successful, False otherwise.
         """
         self.logger.debug(f"Finalizing {stem_name} stem processing and writing audio...")
-        self.write_audio(stem_path, source)
+        success = self.write_audio(stem_path, source)
 
-        return {stem_name: source}
+        return {stem_name: source}, success
 
     def cached_sources_clear(self):
         """
@@ -296,14 +297,15 @@ class CommonSeparator:
 
         if self.use_soundfile:
             self.logger.warning(f"Using soundfile for writing.")
-            self.write_audio_soundfile(stem_path, stem_source)
+            return self.write_audio_soundfile(stem_path, stem_source)
         else:
             self.logger.info(f"Using pydub for writing.")
-            self.write_audio_pydub(stem_path, stem_source)
+            return self.write_audio_pydub(stem_path, stem_source)
 
     def write_audio_pydub(self, stem_path: str, stem_source):
         """
         Writes the separated audio source to a file using pydub (ffmpeg)
+        Returns True if successful, False otherwise.
         """
         self.logger.debug(f"Entering write_audio_pydub with stem_path: {stem_path}")
 
@@ -312,7 +314,7 @@ class CommonSeparator:
         # Check if the numpy array is empty or contains very low values
         if np.max(np.abs(stem_source)) < 1e-6:
             self.logger.warning("Warning: stem_source array is near-silent or empty.")
-            return
+            return False
 
         # If output_dir is specified, create it and join it with stem_path
         if self.output_dir:
@@ -345,7 +347,7 @@ class CommonSeparator:
             self.logger.debug("Created AudioSegment successfully.")
         except (IOError, ValueError) as e:
             self.logger.error(f"Specific error creating AudioSegment: {e}")
-            return
+            return False
 
         # Determine file format based on the file extension
         file_format = stem_path.lower().split(".")[-1]
@@ -386,12 +388,15 @@ class CommonSeparator:
             
             audio_segment.export(stem_path, **export_params)
             self.logger.debug(f"Exported audio file successfully to {stem_path} with {output_bit_depth}-bit depth")
+            return True
         except (IOError, ValueError) as e:
             self.logger.error(f"Error exporting audio file: {e}")
+            return False
 
     def write_audio_soundfile(self, stem_path: str, stem_source):
         """
         Writes the separated audio source to a file using soundfile library.
+        Returns True if successful, False otherwise.
         """
         self.logger.debug(f"Entering write_audio_soundfile with stem_path: {stem_path}")
 
@@ -400,18 +405,27 @@ class CommonSeparator:
         # Check if the numpy array is empty or contains very low values
         if np.max(np.abs(stem_source)) < 1e-6:
             self.logger.warning("Warning: stem_source array is near-silent or empty.")
-            return
+            return False
 
         # If output_dir is specified, create it and join it with stem_path
         if self.output_dir:
             os.makedirs(self.output_dir, exist_ok=True)
             stem_path = os.path.join(self.output_dir, stem_path)
 
+        # Determine the output format from the file extension
+        output_format = stem_path.lower().split(".")[-1]
+
+        # Valid subtypes per format — prevents passing lossy/invalid subtypes to sf.write()
+        VALID_SUBTYPES = {
+            'wav': {'PCM_S8', 'PCM_16', 'PCM_24', 'PCM_32', 'PCM_U8', 'FLOAT', 'DOUBLE', 'ULAW', 'ALAW'},
+            'flac': {'PCM_S8', 'PCM_16', 'PCM_24'},
+            'ogg': {'VORBIS'},
+        }
+        valid_for_format = VALID_SUBTYPES.get(output_format, VALID_SUBTYPES['wav'])
+
         # Determine the subtype based on the input audio's bit depth
         output_subtype = None
-        # Only allow PCM/FLOAT subtypes for WAV output (lossy subtypes like MPEG_LAYER_III are invalid)
-        VALID_WAV_SUBTYPES = {'PCM_S8', 'PCM_16', 'PCM_24', 'PCM_32', 'PCM_U8', 'FLOAT', 'DOUBLE', 'ULAW', 'ALAW'}
-        if self.input_subtype and self.input_subtype in VALID_WAV_SUBTYPES:
+        if self.input_subtype and self.input_subtype in valid_for_format:
             output_subtype = self.input_subtype
             self.logger.info(f"Using input subtype for output: {output_subtype}")
         elif self.input_bit_depth:
@@ -430,6 +444,11 @@ class CommonSeparator:
             output_subtype = 'PCM_16'
             self.logger.warning("No bit depth info available, defaulting to PCM_16")
 
+        # Final safety check: if the resolved subtype is not valid for the output format, force PCM_16
+        if output_subtype not in valid_for_format:
+            self.logger.warning(f"Subtype '{output_subtype}' is not valid for '{output_format}' format, falling back to PCM_16")
+            output_subtype = 'PCM_16'
+
         # Correctly interleave stereo channels if needed
         if stem_source.shape[1] == 2:
             # If the audio is already interleaved, ensure it's in the correct order
@@ -442,16 +461,21 @@ class CommonSeparator:
 
         self.logger.debug(f"Audio data shape for soundfile: {stem_source.shape}")
 
-        """
-        Write audio using soundfile (for formats other than M4A).
-        """
         # Save audio using soundfile with the specified subtype
-        try:
-            # Specify the subtype to match input bit depth
-            sf.write(stem_path, stem_source, self.sample_rate, subtype=output_subtype)
-            self.logger.debug(f"Exported audio file successfully to {stem_path} with subtype {output_subtype}")
-        except Exception as e:
-            self.logger.error(f"Error exporting audio file: {e}")
+        # Retry with PCM_16 if the initial subtype fails (e.g. format/subtype mismatch)
+        for attempt_subtype in [output_subtype, 'PCM_16']:
+            try:
+                sf.write(stem_path, stem_source, self.sample_rate, subtype=attempt_subtype)
+                self.logger.debug(f"Exported audio file successfully to {stem_path} with subtype {attempt_subtype}")
+                return True
+            except Exception as e:
+                if attempt_subtype == output_subtype:
+                    self.logger.warning(f"Write failed with subtype {attempt_subtype}: {e}, retrying with PCM_16")
+                else:
+                    self.logger.error(f"Error exporting audio file even with PCM_16 fallback: {e}")
+                    return False
+
+        return False
 
     def clear_gpu_cache(self):
         """

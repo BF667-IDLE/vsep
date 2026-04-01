@@ -186,15 +186,21 @@ class MDXSeparator(CommonSeparator):
             self.secondary_stem_output_path = self.get_stem_output_path(self.secondary_stem_name, custom_output_names)
 
             self.logger.info(f"Saving {self.secondary_stem_name} stem to {self.secondary_stem_output_path}...")
-            self.final_process(self.secondary_stem_output_path, self.secondary_source, self.secondary_stem_name)
-            output_files.append(self.secondary_stem_output_path)
+            _, write_ok = self.final_process(self.secondary_stem_output_path, self.secondary_source, self.secondary_stem_name)
+            if write_ok:
+                output_files.append(self.secondary_stem_output_path)
+            else:
+                self.logger.error(f"Failed to write {self.secondary_stem_name} stem to {self.secondary_stem_output_path}")
 
         # Save and process the primary stem if needed
         if not self.output_single_stem or self.output_single_stem.lower() == self.primary_stem_name.lower():
             self.primary_stem_output_path = self.get_stem_output_path(self.primary_stem_name, custom_output_names)
             self.logger.info(f"Saving {self.primary_stem_name} stem to {self.primary_stem_output_path}...")
-            self.final_process(self.primary_stem_output_path, self.primary_source, self.primary_stem_name)
-            output_files.append(self.primary_stem_output_path)
+            _, write_ok = self.final_process(self.primary_stem_output_path, self.primary_source, self.primary_stem_name)
+            if write_ok:
+                output_files.append(self.primary_stem_output_path)
+            else:
+                self.logger.error(f"Failed to write {self.primary_stem_name} stem to {self.primary_stem_output_path}")
 
         # Not yet implemented from UVR features:
         # self.process_vocal_split_chain(secondary_sources)

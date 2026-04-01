@@ -179,8 +179,11 @@ class MDXCSeparator(CommonSeparator):
                     ).T
                     
                     self.logger.info(f"Saving {stem_name} stem to {stem_output_path}...")
-                    self.final_process(stem_output_path, stem_source, stem_name)
-                    output_files.append(stem_output_path)
+                    _, write_ok = self.final_process(stem_output_path, stem_source, stem_name)
+                    if write_ok:
+                        output_files.append(stem_output_path)
+                    else:
+                        self.logger.error(f"Failed to write {stem_name} stem to {stem_output_path}")
             else:
                 # Standard processing for primary and secondary stems
                 if not isinstance(self.primary_source, np.ndarray):
@@ -203,15 +206,21 @@ class MDXCSeparator(CommonSeparator):
                     self.secondary_stem_output_path = self.get_stem_output_path(self.secondary_stem_name, custom_output_names)
 
                     self.logger.info(f"Saving {self.secondary_stem_name} stem to {self.secondary_stem_output_path}...")
-                    self.final_process(self.secondary_stem_output_path, self.secondary_source, self.secondary_stem_name)
-                    output_files.append(self.secondary_stem_output_path)
+                    _, write_ok = self.final_process(self.secondary_stem_output_path, self.secondary_source, self.secondary_stem_name)
+                    if write_ok:
+                        output_files.append(self.secondary_stem_output_path)
+                    else:
+                        self.logger.error(f"Failed to write {self.secondary_stem_name} stem to {self.secondary_stem_output_path}")
                 
                 if not self.output_single_stem or self.output_single_stem.lower() == self.primary_stem_name.lower():
                     self.primary_stem_output_path = self.get_stem_output_path(self.primary_stem_name, custom_output_names)
                     
                     self.logger.info(f"Saving {self.primary_stem_name} stem to {self.primary_stem_output_path}...")
-                    self.final_process(self.primary_stem_output_path, self.primary_source, self.primary_stem_name)
-                    output_files.append(self.primary_stem_output_path)
+                    _, write_ok = self.final_process(self.primary_stem_output_path, self.primary_source, self.primary_stem_name)
+                    if write_ok:
+                        output_files.append(self.primary_stem_output_path)
+                    else:
+                        self.logger.error(f"Failed to write {self.primary_stem_name} stem to {self.primary_stem_output_path}")
 
         else:
             # Handle case when source is not a dictionary (single source model)
@@ -222,8 +231,11 @@ class MDXCSeparator(CommonSeparator):
                     self.primary_source = source.T
 
                 self.logger.info(f"Saving {self.primary_stem_name} stem to {self.primary_stem_output_path}...")
-                self.final_process(self.primary_stem_output_path, self.primary_source, self.primary_stem_name)
-                output_files.append(self.primary_stem_output_path)
+                _, write_ok = self.final_process(self.primary_stem_output_path, self.primary_source, self.primary_stem_name)
+                if write_ok:
+                    output_files.append(self.primary_stem_output_path)
+                else:
+                    self.logger.error(f"Failed to write {self.primary_stem_name} stem to {self.primary_stem_output_path}")
 
         return output_files
 
