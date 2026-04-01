@@ -14,7 +14,7 @@
   <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.10%2B-blue.svg" alt="Python 3.10+"/></a>
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"/></a>
   <a href="https://colab.research.google.com/github/BF667-IDLE/vsep/blob/main/notebooks/vsep_demo.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Colab Demo"/></a>
-  <a href="https://patreon.com/uvr"><img src="https://img.shields.io/badge/Support%20UVR-Patreon-%23FF424D?logo=patreon&logoColor=white" alt="Support UVR on Patreon"/></a>
+  <a href="https://patreon.com/uvr"><img src="docs/support_uvr.svg" alt="Support original UVR project" width="160"/></a>
 </p>
 
 **vsep** is a high-performance audio stem separator that splits music into individual components — vocals, drums, bass, and other instruments — using state-of-the-art AI models originally developed for [Ultimate Vocal Remover (UVR)](https://ultimatevocalremover.com/). It supports 100+ pre-trained models across four major architectures (Demucs, MDX-Net, VR, and Roformer/MDXC), runs on any hardware from CPUs to NVIDIA GPUs and Apple Silicon, and offers parallel model downloads with resume support for a seamless experience. Whether you are a music producer isolating vocals for a remix, a podcaster cleaning up background noise, or a researcher experimenting with source separation, vsep provides a simple CLI and Python API to get results fast.
@@ -568,4 +568,4 @@ vsep is built on the shoulders of giants. We gratefully acknowledge:
 | **Try It Free** | [Google Colab Demo](https://colab.research.google.com/github/BF667-IDLE/vsep/blob/main/notebooks/vsep_demo.ipynb) |
 | **Support UVR** | [Patreon](https://patreon.com/uvr) ❤️ |
 
-<a href="https://patreon.com/uvr"><img src="docs/support_banner.png" alt="Support This Project"/></a>
+<a href="https://patreon.com/uvr"><img src="docs/support_uvr.svg" alt="Support original UVR project" width="320"/></a>
