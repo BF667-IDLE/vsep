@@ -1,6 +1,8 @@
 <div align="center">
 <img src="docs/logo.svg" alt="vsep logo" width="200"/>
 <br/>
+<sub>custom logo — handcrafted with ♥</sub>
+<br/><br/>
 <b>vsep</b> — Lightning-Fast Audio Stem Separator
 <br/>
 <a href="https://github.com/BF667-IDLE/vsep/wiki">Wiki</a> ·
