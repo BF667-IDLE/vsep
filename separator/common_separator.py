@@ -240,9 +240,10 @@ class CommonSeparator:
                 elif 'PCM_32' in self.input_subtype or 'FLOAT' in self.input_subtype or 'DOUBLE' in self.input_subtype:
                     self.input_bit_depth = 32
                 else:
-                    # Default to 16-bit for unknown formats
+                    # Default to 16-bit for unknown/lossy formats (e.g. MPEG_LAYER_III)
                     self.input_bit_depth = 16
-                    self.logger.warning(f"Unknown audio subtype {self.input_subtype}, defaulting to 16-bit output")
+                    self.input_subtype = 'PCM_16'
+                    self.logger.warning(f"Unknown/lossy audio subtype detected, defaulting to PCM_16 output")
                 
                 self.logger.info(f"Detected input bit depth: {self.input_bit_depth}-bit")
             except Exception as e:
@@ -408,7 +409,9 @@ class CommonSeparator:
 
         # Determine the subtype based on the input audio's bit depth
         output_subtype = None
-        if self.input_subtype:
+        # Only allow PCM/FLOAT subtypes for WAV output (lossy subtypes like MPEG_LAYER_III are invalid)
+        VALID_WAV_SUBTYPES = {'PCM_S8', 'PCM_16', 'PCM_24', 'PCM_32', 'PCM_U8', 'FLOAT', 'DOUBLE', 'ULAW', 'ALAW'}
+        if self.input_subtype and self.input_subtype in VALID_WAV_SUBTYPES:
             output_subtype = self.input_subtype
             self.logger.info(f"Using input subtype for output: {output_subtype}")
         elif self.input_bit_depth:
