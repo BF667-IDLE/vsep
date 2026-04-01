@@ -1,8 +1,16 @@
-# vsep - Lightning-Fast Audio Stem Separator
-
+<div align="center">
+<img src="docs/logo.svg" alt="vsep logo" width="200"/>
+<br/>
+<b>vsep</b> — Lightning-Fast Audio Stem Separator
+<br/>
+<a href="https://github.com/BF667-IDLE/vsep/wiki">Wiki</a> ·
+<a href="https://colab.research.google.com/github/BF667-IDLE/vsep/blob/main/notebooks/vsep_demo.ipynb">Colab Demo</a> ·
+<a href="https://opensource.org/licenses/MIT">MIT License</a>
+<br/>
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Colab Demo](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/BF667-IDLE/vsep/blob/main/notebooks/vsep_demo.ipynb)
+</div>
 
 **vsep** is a high-performance audio stem separator that splits music into individual components — vocals, drums, bass, and other instruments — using state-of-the-art AI models originally developed for [Ultimate Vocal Remover (UVR)](https://ultimatevocalremover.com/). It supports 100+ pre-trained models across four major architectures (Demucs, MDX-Net, VR, and Roformer/MDXC), runs on any hardware from CPUs to NVIDIA GPUs and Apple Silicon, and offers parallel model downloads with resume support for a seamless experience. Whether you are a music producer isolating vocals for a remix, a podcaster cleaning up background noise, or a researcher experimenting with source separation, vsep provides a simple CLI and Python API to get results fast.
 
@@ -121,7 +129,13 @@ python utils/cli.py your_song.mp3 --single_stem Vocals
 python utils/cli.py --list_models
 
 # Filter model list by stem type (e.g., only vocal models)
-python utils/cli.py --list_models --list_filter vocals
+python utils/cli.py --list_models --list_stem vocals
+
+# Filter by architecture (e.g., only Roformer models)
+python utils/cli.py --list_models --list_type MDXC
+
+# Show models grouped by task category
+python utils/cli.py --list_models --list_format categories
 
 # Download a model without separating
 python utils/cli.py --download_model_only BS-Roformer-Viperx-1297.ckpt
@@ -415,8 +429,14 @@ vsep/
 ├── notebooks/                 # Jupyter / Google Colab demos
 │   └── vsep_demo.ipynb
 ├── docs/                      # Detailed documentation
+│   ├── logo.svg               #   App logo (vector)
+│   ├── logo.png               #   App logo (raster)
 │   ├── API-Reference.md       #   Full API reference (Separator, CLI, config, ensemble)
 │   ├── Architecture.md        #   Architecture overview with diagrams
+├── wiki/                      # Wiki pages (mirrored to GitHub Wiki)
+│   ├── Home.md                #   Wiki home page
+│   ├── _Sidebar.md            #   Wiki navigation sidebar
+│   └── ...                    #   Installation, CLI, Models, API, etc.
 ├── tools/                     # Development tools
 │   ├── calculate-model-hashes.py
 │   └── sync-to-github.py
@@ -428,6 +448,7 @@ vsep/
 ├── models.json                # Model registry
 ├── models-scores.json         # Benchmark scores for all models
 ├── model-data.json            # Model parameter metadata
+├── LICENSE                    # MIT License
 ├── INSTALL.md                 # Platform-specific installation guide
 ├── CONTRIBUTING.md            # Contribution guidelines
 └── README.md                  # This file
@@ -489,6 +510,7 @@ For in-depth documentation beyond this README:
 
 | Document | Description |
 |:---------|:------------|
+| [Wiki](https://github.com/BF667-IDLE/vsep/wiki) | Complete documentation — Installation, CLI, Models, API, Config, Architecture, Colab, Troubleshooting |
 | [`docs/API-Reference.md`](docs/API-Reference.md) | Full API reference — Separator class, CLI arguments, configuration variables, ensemble algorithms, remote API client |
 | [`docs/Architecture.md`](docs/Architecture.md) | Architecture overview with diagrams — system design, model download pipeline, hardware acceleration, all 4 separation architectures |
 
