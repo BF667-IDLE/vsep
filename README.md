@@ -18,26 +18,26 @@
 
 ## Table of Contents
 
-- [Features](#-features)
-- [Quick Start](#-quick-start)
+- [Features](#features)
+- [Quick Start](#quick-start)
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
   - [Basic Usage (CLI)](#basic-usage-cli)
   - [Basic Usage (Python API)](#basic-usage-python-api)
-- [Supported Architectures](#-supported-architectures)
-- [Model Gallery](#-model-gallery)
-- [Configuration](#-configuration)
-- [Advanced Features](#-advanced-features)
+- [Supported Architectures](#supported-architectures)
+- [Model Gallery](#model-gallery)
+- [Configuration](#configuration)
+- [Advanced Features](#advanced-features)
   - [Ensemble Separation](#ensemble-separation)
   - [Chunking for Long Files](#chunking-for-long-files)
   - [Output Customization](#output-customization)
   - [Remote Deployment](#remote-deployment)
-- [Performance Benchmarks](#-performance-benchmarks)
-- [Project Structure](#-project-structure)
-- [Development](#-development)
-- [Contributing](#-contributing)
-- [License](#-license)
-- [Acknowledgments](#-acknowledgments)
+- [Performance Benchmarks](#performance-benchmarks)
+- [Project Structure](#project-structure)
+- [Development](#development)
+- [Contributing](#contributing)
+- [License](#license)
+- [Acknowledgments](#acknowledgments)
 
 ---
 
